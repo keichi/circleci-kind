@@ -1,10 +1,18 @@
 version: 2
 jobs:
- build:
-   machine: true
-   steps:
-     - checkout
-     - run: curl -Lo kind-linux-amd64 https://github.com/kubernetes-sigs/kind/releases/download/v0.4.0/kind-linux-amd64
-     - run: chmod +x kind-linux-amd64
-     - run: ./kind-linux-amd64 create cluster
-     - run: KUBECONFIG="$(kind get kubeconfig-path --name="kind")" kubectl cluster-info
+  build:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Start Kubernetes cluster
+          command: |
+            curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.4.0/kind-linux-amd64
+            chmod +x ./kind
+            ./kind create cluster
+      - run:
+          name: Test Kubernetes cluster
+          command: |
+            curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+            chmod +x ./kubectl
+            KUBECONFIG="$(./kind get kubeconfig-path --name="kind")" ./kubectl cluster-info
