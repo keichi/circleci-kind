@@ -4,4 +4,6 @@ jobs:
    machine: true
    steps:
      - checkout
-     - run: docker run --rm hello-world
+     - run: curl -Lo kind-linux-amd64 https://github.com/kubernetes-sigs/kind/releases/download/v0.4.0/kind-linux-amd64
+     - run: chmod +x kind-linux-amd64
+     - run: ./kind-linux-amd64 create cluster
